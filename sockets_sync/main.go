@@ -25,7 +25,7 @@ func handleConnection(conn net.Conn) {
 		}
 		log.Printf("Получено сообщение от %s: %s", conn.RemoteAddr().String(), message)
 		// Обрабатываем полученное сообщение
-		time.Sleep(3 * time.Second)
+		time.Sleep(5 * time.Second)
 		response := MakeResponce(message[:len(message)-1])
 		// Отправляем ответ обратно клиенту
 		_, err = conn.Write([]byte(response))
@@ -54,8 +54,7 @@ func Test1(i string) {
 
 func main() {
 	//лог-файл
-
-	logfilepath := "C:/Users/mi/Documents/GitHub/weblabs/sockets_nosync/server.log"
+	logfilepath := "C:/Users/mi/Documents/GitHub/weblabs/sockets_sync/server.log"
 	logFile, err := os.OpenFile(logfilepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	defer logFile.Close()
 	log.SetOutput(logFile)
@@ -72,9 +71,8 @@ func main() {
 		return
 	}
 	defer listener.Close()
-	log.Println("Запуск сервера")
-	fmt.Println("Сервер запущен")
-
+	log.Println("Запуск асинхронного сервера")
+	fmt.Println("Асинхронный сервер запущен")
 	for {
 		// Принимаем новое соединение
 		conn, err := listener.Accept()
@@ -84,6 +82,6 @@ func main() {
 		}
 
 		//обработка соединения
-		handleConnection(conn)
+		go handleConnection(conn)
 	}
 }
